@@ -1,0 +1,1 @@
+insert into deliverydb (customer_id, order_id, restaurant_id, status) values (1L, 1L, 1L, 'delivered');
