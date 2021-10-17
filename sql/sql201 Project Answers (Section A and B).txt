@@ -1,0 +1,37 @@
+Section A 
+
+1) select * from movie inner join movie_genres on movie_genres.mov_id=movie.mov_id where movie_genres.gen_id=1008;
+2) select reviewer.rev_name from reviewer,rating where rating.rev_id=reviewer.rev_id and rating.rev_stars>=8 and reviewer.rev_name is not null;
+3) select * from actor where act_id in(select act_id from movie_cast where mov_id in(select mov_id from movie where mov_title='Deliverance'));
+4) select dir_fname,dir_lname,mov_title from director natural join movie_director natural join movie natural join movie_cast where role is not null 
+   and mov_title='Eyes Wide Shut'; 
+5) select mov_title,mov_year,mov_dt_rel,dir_fname,dir_lname,act_fname,act_lname from movie a,movie_director b,director c,rating d,reviewer e,
+   actor f,movie_cast g where a.mov_id=b.mov_id and b.dir_id=c.dir_id and a.mov_id=d.mov_id and d.rev_id=e.rev_id 
+   and a.mov_id=g.mov_id and e.rev_name='Neal Wruck';
+6) select distinct mov_year from movie where mov_id in(select mov_id from rating where rev_stars>4) order by mov_year;
+7) select rev_name from reviewer inner join rating using(rev_id) where rev_stars is null;
+8) select mov_title from movie where mov_id in(select mov_id from movie_director where dir_id in(select dir_id from director where dir_fname='David'));
+9) select act_fname,act_lname,role from actor inner join movie_cast on actor.act_id=movie_cast.act_id inner join movie on 
+   movie_cast.mov_id=movie.mov_id and mov_title='Boogie Nights';
+10)select act_fname,act_lname from actor inner join movie_cast on movie_cast.act_id=actor.act_id having count(movie_cast.act_id>1);
+ 
+Section B
+
+Stored Procedure -> To cast a new actor to a movie
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `cast_newactor_to_movie`(in actor_id int, movie_id int)
+BEGIN
+declare flag  int;
+set flag=(select count(act_id) from movie_cast where act_id=actor_id and mov_id=movie_id);
+if(flag>0)
+then
+    begin
+        select "Data Exists";
+    end;
+else
+    begin
+        insert into movie_cast(mov_id,act_id) values (movie_id,actor_id);
+        select"Data Added Successfully";
+    end;
+    end if;
+END
